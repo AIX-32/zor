@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#000000">
-  <title>Zor · triadic core</title>
+  <title>Zor.</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,6 +63,11 @@
     #installBtn {
       font-size: 0.65rem;
       letter-spacing: 2px;
+    }
+
+    #installBtn[disabled] {
+      color: rgba(255, 255, 255, 0.3);
+      cursor: default;
     }
 
     #newChatBtn:hover,
@@ -212,7 +217,7 @@
 
   <div id="topControls">
     <button id="newChatBtn">NEW CHAT</button>
-    <button id="installBtn" hidden>INSTALL APP</button>
+    <button id="installBtn" disabled title="Install Zor to your device">INSTALL APP</button>
   </div>
 
   <div class="container">
@@ -490,31 +495,48 @@ Original question: ${question}`;
     });
 
     let deferredInstallPrompt = null;
+    let installHintTimer = null;
 
     window.addEventListener('beforeinstallprompt', event => {
       event.preventDefault();
       deferredInstallPrompt = event;
-      installBtn.hidden = false;
+      installBtn.disabled = false;
+      installBtn.textContent = 'INSTALL APP';
+      installBtn.title = 'Install Zor to your device';
     });
 
     installBtn.addEventListener('click', async () => {
-      if (!deferredInstallPrompt) return;
+      if (!deferredInstallPrompt) {
+        installBtn.disabled = true;
+        installBtn.textContent = 'USE CHROME MENU';
+        installBtn.title = 'Tap ⋮ and choose “Add to Home screen”';
+        clearTimeout(installHintTimer);
+        installHintTimer = setTimeout(() => {
+          installBtn.textContent = 'INSTALL APP';
+          installBtn.disabled = false;
+          installBtn.title = 'Install Zor to your device';
+        }, 2600);
+        return;
+      }
       installBtn.disabled = true;
       deferredInstallPrompt.prompt();
       const choice = await deferredInstallPrompt.userChoice;
       if (choice && choice.outcome === 'accepted') {
         installBtn.textContent = 'INSTALLED';
+        installBtn.disabled = true;
       }
       deferredInstallPrompt = null;
-      installBtn.hidden = true;
-      installBtn.disabled = false;
-      installBtn.textContent = 'INSTALL APP';
+      if (!(choice && choice.outcome === 'accepted')) {
+        installBtn.disabled = false;
+        installBtn.textContent = 'INSTALL APP';
+        installBtn.title = 'Install Zor to your device';
+      }
     });
 
     window.addEventListener('appinstalled', () => {
       deferredInstallPrompt = null;
-      installBtn.hidden = true;
-      installBtn.textContent = 'INSTALL APP';
+      installBtn.disabled = true;
+      installBtn.textContent = 'INSTALLED';
     });
 
     if ('serviceWorker' in navigator) {
