@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <title>Zor · triadic core</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #000000;
+      --fg: #e8e8e8;
+      --dim: #3a3a3a;
+      --mid: #888;
+      --flash-bg: #e8e8e8;
+      --flash-fg: #0a0a0a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    #topControls {
+      position: fixed;
+      top: 1.4rem;
+      left: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: flex-start;
+      z-index: 100;
+    }
+
+    #newChatBtn,
+    #installBtn {
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 3px;
+      color: var(--dim);
+      transition: color 0.15s;
+      padding: 0;
+    }
+
+    #newChatBtn {
+      font-size: 0.7rem;
+    }
+
+    #installBtn {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+    }
+
+    #newChatBtn:hover,
+    #installBtn:hover:not(:disabled) { color: var(--fg); }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3.5rem;
+    }
+
+    .image-wrap {
+      width: 260px;
+      height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #mainImage {
+      width: 260px;
+      height: 260px;
+      object-fit: cover;
+      will-change: transform;
+    }
+
+    .input-row {
+      width: 100%;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      border-bottom: 1px solid var(--dim);
+      padding-bottom: 0.6rem;
+    }
+
+    #questionInput {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--fg);
+      letter-spacing: 0.02em;
+    }
+    #questionInput::placeholder { color: var(--dim); }
+
+    #askButton {
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: var(--mid);
+      transition: color 0.15s;
+      padding: 0;
+    }
+    #askButton:hover:not(:disabled) { color: var(--fg); }
+    #askButton:disabled { color: var(--dim); cursor: default; }
+
+    .zor-section {
+      width: 100%;
+      text-align: center;
+      min-height: 4rem;
+    }
+
+    .zor-eyebrow {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: var(--dim);
+      margin-bottom: 1rem;
+    }
+
+    #zorAnswer {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--fg);
+      white-space: pre-wrap;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    #zorAnswer.visible { opacity: 1; transform: translateY(0); }
+    #zorAnswer.idle { opacity: 0.18; transform: translateY(0); }
+
+    .cards-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--dim);
+    }
+
+    .card:last-child { grid-column: span 2; }
+
+    .card {
+      background: var(--bg);
+      padding: 1.8rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      min-height: 7rem;
+    }
+
+    .card.flashing { background: var(--flash-bg); }
+    .card.flashing .card-label { color: var(--flash-fg); }
+    .card.flashing .card-answer { color: var(--flash-fg); }
+
+    .card-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 3.5px;
+      color: var(--dim);
+    }
+
+    .card-answer {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--mid);
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 2.5rem;
+    }
+
+    .card-answer.appearing {
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="topControls">
+    <button id="newChatBtn">NEW CHAT</button>
+    <button id="installBtn" hidden>INSTALL APP</button>
+  </div>
+
+  <div class="container">
+    <div class="image-wrap">
+      <img id="mainImage" src="./zor.png" alt="Zor"
+        onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'160\' height=\'160\' viewBox=\'0 0 100 100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%230a0a0a\'/%3E%3Ctext x=\'50\' y=\'72\' font-size=\'72\' text-anchor=\'middle\' fill=\'%23e8e8e8\' font-family=\'serif\' font-weight=\'300\'%3EZ%3C/text%3E%3C/svg%3E';">
+    </div>
+
+    <div class="input-row">
+      <input type="text" id="questionInput" placeholder="ask something...">
+      <button id="askButton">ASK</button>
+    </div>
+
+    <div class="zor-section">
+      <div class="zor-eyebrow">ZOR</div>
+      <div id="zorAnswer" class="idle">ask away.</div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card" id="cardMother">
+        <div class="card-label">Mother</div>
+        <div class="card-answer" id="motherAnswer"></div>
+      </div>
+      <div class="card" id="cardWorker">
+        <div class="card-label">Worker</div>
+        <div class="card-answer" id="workerAnswer"></div>
+      </div>
+      <div class="card" id="cardLeader">
+        <div class="card-label">Leader</div>
+        <div class="card-answer" id="leaderAnswer"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://js.puter.com/v2/"></script>
+  <script>
+  (function () {
+    const img = document.getElementById('mainImage');
+    const questionInput = document.getElementById('questionInput');
+    const askBtn = document.getElementById('askButton');
+    const zorDiv = document.getElementById('zorAnswer');
+    const newChatBtn = document.getElementById('newChatBtn');
+    const installBtn = document.getElementById('installBtn');
+
+    const cards = {
+      mother: { card: document.getElementById('cardMother'), ans: document.getElementById('motherAnswer') },
+      worker: { card: document.getElementById('cardWorker'), ans: document.getElementById('workerAnswer') },
+      leader: { card: document.getElementById('cardLeader'), ans: document.getElementById('leaderAnswer') },
+    };
+    const cardList = Object.values(cards);
+
+    let history = [];
+    let newChatPending = false;
+
+    const MEM_KEY = 'zor_memories';
+    function loadMemories() {
+      try { return JSON.parse(localStorage.getItem(MEM_KEY) || '[]'); } catch { return []; }
+    }
+    function saveMemory(item) {
+      const m = loadMemories();
+      m.push(item);
+      try {
+        localStorage.setItem(MEM_KEY, JSON.stringify(m));
+        console.log('[MEMORY] saved:', item);
+      } catch(e) {
+        console.error('[MEMORY] save failed:', e);
+      }
+    }
+
+    function getMemoryString() {
+      const mems = loadMemories();
+      if (!mems.length) return '';
+      return `\n[PERSISTENT MEMORIES:\n${mems.map((m,i)=>`${i+1}. ${m}`).join('\n')}\n]`;
+    }
+
+    function systemPrompt() {
+      let s = `You are Zor, a synthesis intelligence formed from three internal voices: Mother (warmth, nurture), Worker (practical, direct), Leader (vision, authority). You speak as one unified voice — concise, thoughtful, never verbose. You hold the full thread of this conversation and respond with continuity. If the user asks what you remember or about a past fact, use the persistent memories below to answer accurately. Never invent memories not listed.`;
+      const memStr = getMemoryString();
+      if (memStr) s += memStr;
+      return s;
+    }
+
+    function voicePrompt(role, question) {
+      let base = `You are a ${role}. Respond to the question below in 2-3 sentences, staying true to your personality.`;
+      const memStr = getMemoryString();
+      if (memStr) base += `\n\nPersistent memories (use if relevant):${memStr}`;
+      return base + `\n\nQuestion: ${question}`;
+    }
+
+    let spinRaf = null, angle = 0, spinning = false;
+    const eio = t => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
+
+    function spinOnce(cb) {
+      const dur = 1400, t0 = performance.now(), a0 = angle % 360;
+      (function frame(now) {
+        const p = Math.min((now-t0)/dur, 1);
+        angle = a0 + 360*eio(p);
+        img.style.transform = `rotate(${angle}deg)`;
+        if (p < 1) spinRaf = requestAnimationFrame(frame);
+        else { spinRaf = null; cb && cb(); }
+      })(performance.now());
+    }
+    function keepSpinning() { if (!spinning) return; spinOnce(() => { if (spinning) setTimeout(keepSpinning, 300); }); }
+    function startSpinning() { if (spinning) return; spinning = true; keepSpinning(); }
+    function stopSpinning()  { spinning = false; }
+
+    const ft = { mother: null, worker: null, leader: null };
+    let flashing = false;
+
+    function flashCard(key) {
+      if (!flashing) return;
+      cards[key].card.classList.add('flashing');
+      setTimeout(() => {
+        cards[key].card.classList.remove('flashing');
+        if (flashing) ft[key] = setTimeout(() => flashCard(key), 200 + Math.random()*1600);
+      }, 80 + Math.random()*120);
+    }
+    function startFlashing() {
+      flashing = true;
+      Object.keys(cards).forEach((k,i) => { ft[k] = setTimeout(() => flashCard(k), i*180 + Math.random()*300); });
+    }
+    function stopFlashing() {
+      flashing = false;
+      Object.keys(ft).forEach(k => { clearTimeout(ft[k]); ft[k]=null; });
+      cardList.forEach(({card}) => card.classList.remove('flashing'));
+    }
+
+    function setLoading(on) {
+      askBtn.disabled = on;
+      on ? (startSpinning(), startFlashing()) : (stopSpinning(), stopFlashing());
+    }
+
+    function setCardText(key, text) {
+      const { ans } = cards[key];
+      ans.textContent = text || '';
+      if (text) { ans.classList.remove('appearing'); void ans.offsetWidth; ans.classList.add('appearing'); }
+    }
+
+    function resetUI() {
+      Object.keys(cards).forEach(k => setCardText(k, ''));
+      zorDiv.className = '';
+      zorDiv.textContent = '...';
+    }
+
+    async function callRaw(prompt) {
+      try {
+        const r = await puter.ai.chat(prompt, { model: 'gpt-4o-mini' });
+        if (typeof r === 'object' && r !== null) return r.text || r.message?.content || JSON.stringify(r);
+        return String(r);
+      } catch { return null; }
+    }
+
+    async function callZor(userContent) {
+      try {
+        let content = userContent;
+        if (newChatPending) {
+          content = `[NEW CHAT STARTED HERE — do not refer to past exchanges]\n\n${userContent}`;
+          newChatPending = false;
+        }
+        const msgs = [
+          { role: 'system', content: systemPrompt() },
+          ...history.slice(0, -1).filter(m => m.role === 'assistant' || !m.content.startsWith('Synthesize these')),
+          { role: 'user', content }
+        ];
+        const r = await puter.ai.chat(msgs, { model: 'gpt-4o-mini' });
+        if (typeof r === 'object' && r !== null) return r.text || r.message?.content || JSON.stringify(r);
+        return String(r);
+      } catch { return null; }
+    }
+
+    function detectRememberIntent(text) {
+      const lower = text.toLowerCase();
+      const patterns = [
+        /remember|save|store|keep|note|don'?t forget|hold onto|memorize/i,
+        /i want you to (remember|save|keep|note)/i,
+        /please (remember|save|keep|note)/i
+      ];
+      return patterns.some(p => p.test(lower));
+    }
+
+    async function extractMemory(userQ, zorReply) {
+      const extractionPrompt = `Extract the core fact or thing to remember from this exchange as ONE short sentence. No preamble, no explanation.
+User: "${userQ}"
+Zor: "${zorReply}"
+Reply with just the memory sentence.`;
+      const result = await callRaw(extractionPrompt);
+      if (result && result.trim().length > 3) return result.trim();
+      const match = userQ.match(/(?:remember|save|store|keep|note|that)\s+(.+)/i);
+      if (match && match[1].length > 3) return match[1].trim();
+      return null;
+    }
+
+    async function checkMemory(userQ, zorReply) {
+      if (!detectRememberIntent(userQ)) return false;
+      const mem = await extractMemory(userQ, zorReply);
+      if (mem) {
+        saveMemory(mem);
+        return true;
+      }
+      return false;
+    }
+
+    async function askZor() {
+      const question = questionInput.value.trim();
+      if (!question) return;
+
+      questionInput.value = '';
+      resetUI();
+      setLoading(true);
+
+      history.push({ role: 'user', content: question });
+      if (history.length > 20) history = history.slice(-20);
+
+      try {
+        const recentHistory = history.slice(-7, -1).filter(m =>
+          m.role === 'assistant' || (m.role === 'user' && !m.content.startsWith('Synthesize these'))
+        );
+        const ctx = recentHistory.length
+          ? '[Conversation so far:\n' + recentHistory.map(m => (m.role === 'user' ? 'User' : 'Zor') + ': ' + m.content).join('\n') + '\n]\n\n'
+          : '';
+
+        const [mR, wR, lR] = await Promise.allSettled([
+          callRaw(ctx + voicePrompt('mother', question)),
+          callRaw(ctx + voicePrompt('worker', question)),
+          callRaw(ctx + voicePrompt('leader', question)),
+        ]);
+
+        const mt = mR.status==='fulfilled' && mR.value ? mR.value : '[silent]';
+        const wt = wR.status==='fulfilled' && wR.value ? wR.value : '[silent]';
+        const lt = lR.status==='fulfilled' && lR.value ? lR.value : '[silent]';
+
+        setCardText('mother', mt);
+        setCardText('worker', wt);
+        setCardText('leader', lt);
+
+        const synthPrompt = `Synthesize these three voices into one concise answer (2-3 sentences). Speak as Zor.
+Mother: ${mt}
+Worker: ${wt}
+Leader: ${lt}
+Original question: ${question}`;
+
+        const zorReply = await callZor(synthPrompt);
+        const final = zorReply || '—';
+
+        zorDiv.textContent = final;
+        zorDiv.className = 'visible';
+
+        history.push({ role: 'assistant', content: final });
+
+        const saved = await checkMemory(question, final);
+        if (saved && !final.includes("i'll remember")) {
+          zorDiv.textContent = final + "\n\n— i'll remember this.";
+        }
+
+      } catch {
+        zorDiv.textContent = 'error.';
+        zorDiv.className = 'visible';
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    newChatBtn.addEventListener('click', () => {
+      newChatPending = true;
+      Object.keys(cards).forEach(k => setCardText(k, ''));
+      zorDiv.className = 'idle';
+      zorDiv.textContent = 'ask away.';
+      questionInput.value = '';
+      questionInput.focus();
+    });
+
+    askBtn.addEventListener('click', askZor);
+    questionInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !askBtn.disabled) askZor();
+    });
+
+    let deferredInstallPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', event => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      installBtn.hidden = false;
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredInstallPrompt) return;
+      installBtn.disabled = true;
+      deferredInstallPrompt.prompt();
+      const choice = await deferredInstallPrompt.userChoice;
+      if (choice && choice.outcome === 'accepted') {
+        installBtn.textContent = 'INSTALLED';
+      }
+      deferredInstallPrompt = null;
+      installBtn.hidden = true;
+      installBtn.disabled = false;
+      installBtn.textContent = 'INSTALL APP';
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      installBtn.hidden = true;
+      installBtn.textContent = 'INSTALL APP';
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.warn('[SW]', err));
+      });
+    }
+
+  })();
+  </script>
+</body>
+</html>
