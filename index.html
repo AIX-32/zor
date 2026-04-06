@@ -140,6 +140,11 @@
 
     .new-chat-btn:hover {
       filter: brightness(0.9);
+      transform: translateY(-1px);
+    }
+
+    .new-chat-btn:active {
+      transform: translateY(0);
     }
 
     .chat-search {
@@ -186,11 +191,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.15s, color 0.15s;
+      transition: background 0.15s, color 0.15s, transform 0.15s;
     }
 
     .chat-item:hover {
       background: var(--hover-bg);
+      transform: translateX(4px);
     }
 
     .chat-item.active {
@@ -243,6 +249,12 @@
       z-index: 2000;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
       display: none;
+      animation: contextMenuIn 0.2s ease;
+    }
+
+    @keyframes contextMenuIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .context-menu.visible {
@@ -295,13 +307,19 @@
       font-size: 9px;
       letter-spacing: 0.15em;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .sidebar-btn:hover {
       background: var(--hover-bg);
       color: var(--text);
       border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-btn:active {
+      transform: translateY(0);
     }
 
     /* Main Area */
@@ -370,11 +388,12 @@
       cursor: pointer;
       padding: 4px 8px;
       border-radius: 4px;
-      transition: background 0.15s;
+      transition: background 0.15s, transform 0.15s;
     }
 
     .chat-title:hover {
       background: var(--hover-bg);
+      transform: scale(1.02);
     }
 
     .topbar-right {
@@ -416,12 +435,24 @@
       justify-content: center;
       text-align: center;
       color: var(--text-dim);
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .empty-icon {
       font-size: 48px;
       opacity: 0.2;
       margin-bottom: 16px;
+      animation: iconPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes iconPulse {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(1.05); }
     }
 
     .empty-title {
@@ -447,17 +478,18 @@
     .msg {
       margin-bottom: 20px;
       animation: msgIn 0.25s ease;
+      transform-origin: left center;
     }
 
     @keyframes msgIn {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(16px) scale(0.98);
       }
 
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
 
@@ -489,6 +521,18 @@
 
     .msg-user .msg-content {
       color: var(--text);
+    }
+
+    .msg-attached-image {
+      margin-bottom: 8px;
+      text-align: right;
+    }
+
+    .msg-attached-image img {
+      max-width: 200px;
+      max-height: 150px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
     }
 
     .msg-user {
@@ -604,6 +648,12 @@
       position: relative;
       margin: 16px 0;
       background: #fff;
+      animation: codeBlockIn 0.4s ease;
+    }
+
+    @keyframes codeBlockIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .code-block pre {
@@ -684,6 +734,18 @@
       background: var(--input-bg);
       border-radius: 4px;
       overflow: hidden;
+      animation: widgetIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes widgetIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
 
     .widget-header {
@@ -707,6 +769,12 @@
       background: var(--input-bg);
       padding: 14px;
       border-radius: 4px;
+      animation: resultIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes resultIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .sandbox-label {
@@ -780,6 +848,12 @@
       position: relative;
       display: inline-block;
       margin-bottom: 10px;
+      animation: previewIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes previewIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .image-preview-container img {
@@ -906,6 +980,12 @@
       background: var(--hover-bg);
       color: var(--text);
       border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .input-btn:active {
+      transform: translateY(0);
     }
 
     .input-btn.send {
@@ -915,10 +995,31 @@
       font-family: 'Anton', sans-serif;
       font-size: 13px;
       letter-spacing: 0.08em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .input-btn.send::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s;
+    }
+
+    .input-btn.send:hover::after {
+      transform: translateX(100%);
     }
 
     .input-btn.send:hover {
       filter: brightness(0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+    }
+
+    .input-btn.send:active {
+      transform: translateY(0);
     }
 
     .input-btn:disabled {
@@ -991,16 +1092,463 @@
       justify-content: center;
       font-size: 18px;
       z-index: 50;
-      transition: all 0.15s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
     .scroll-fab.visible {
       display: flex;
+      animation: fabIn 0.3s ease;
+    }
+
+    @keyframes fabIn {
+      from {
+        opacity: 0;
+        transform: scale(0.5) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
 
     .scroll-fab:hover {
       background: var(--hover-bg);
       border-color: var(--border-hover);
+    }
+
+    /* Image Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+      cursor: zoom-out;
+      animation: lightboxIn 0.2s ease;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    @keyframes lightboxIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s;
+    }
+
+    .lightbox:hover img {
+      transform: scale(1.02);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.2s;
+    }
+
+    .lightbox-close:hover {
+      background: var(--hover-bg);
+      transform: scale(1.1);
+    }
+
+    /* Whitebox Sidebar */
+    .whitebox-sidebar {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 380px;
+      height: 100%;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 150;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .whitebox-sidebar.open {
+      transform: translateX(0);
+    }
+
+    body.whitebox-open .main {
+      margin-right: 380px;
+    }
+
+    body.whitebox-open .scroll-fab {
+      right: 400px;
+    }
+
+    .whitebox-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .whitebox-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+    }
+
+    .whitebox-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 4px;
+    }
+
+    .whitebox-close:hover {
+      color: var(--text);
+    }
+
+    .whitebox-files {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .whitebox-empty {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 10px;
+      padding: 40px 20px;
+      letter-spacing: 0.1em;
+    }
+
+    .file-item {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      animation: fileIn 0.3s ease;
+    }
+
+    @keyframes fileIn {
+      from { opacity: 0; transform: translateX(10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .file-header {
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .file-header:hover {
+      background: var(--hover-bg);
+    }
+
+    .file-name {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-name .material-symbols-outlined {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .file-ext {
+      font-size: 8px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .file-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+
+    .file-btn:hover {
+      background: var(--hover-bg);
+      color: var(--text);
+      border-color: var(--border-hover);
+    }
+
+    .file-btn.run {
+      color: var(--accent);
+    }
+
+    .file-preview {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-family: 'DM Mono', monospace;
+      max-height: 80px;
+      overflow: hidden;
+      white-space: pre;
+      background: var(--bg);
+    }
+
+    .file-body {
+      display: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .file-body.open {
+      display: block;
+      animation: fileBodyIn 0.2s ease;
+    }
+
+    @keyframes fileBodyIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .file-editor {
+      width: 100%;
+      min-height: 200px;
+      background: var(--bg);
+      border: none;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      padding: 12px;
+      resize: vertical;
+      outline: none;
+      line-height: 1.6;
+    }
+
+    .file-diff {
+      padding: 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      background: var(--bg);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .diff-line {
+      padding: 2px 8px;
+      white-space: pre;
+    }
+
+    .diff-add {
+      background: rgba(0, 255, 0, 0.1);
+      color: #4f4;
+    }
+
+    .diff-remove {
+      background: rgba(255, 0, 0, 0.1);
+      color: #f44;
+    }
+
+    .diff-context {
+      color: var(--text-muted);
+    }
+
+    .file-footer {
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+
+    .file-save-btn {
+      flex: 1;
+      padding: 8px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      font-family: 'Anton', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+
+    .file-save-btn:hover {
+      filter: brightness(0.9);
+    }
+
+    .file-discard-btn {
+      flex: 1;
+      padding: 8px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'Anton', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+    }
+
+    .file-discard-btn:hover {
+      background: var(--hover-bg);
+      color: var(--text);
+    }
+
+    /* Steps Panel */
+    .steps-panel {
+      border-top: 1px solid var(--border);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .steps-header {
+      padding: 10px 12px;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      background: var(--bg);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .steps-header:hover {
+      background: var(--hover-bg);
+    }
+
+    .step-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+    }
+
+    .step-item:last-child {
+      border-bottom: none;
+    }
+
+    .step-number {
+      font-size: 8px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .step-action {
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .step-result {
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-size: 9px;
+    }
+
+    .step-continue-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      font-family: 'Anton', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+    }
+
+    .step-continue-btn:hover {
+      filter: brightness(0.9);
+    }
+
+    .file-edit-note {
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin: 8px 0;
+      font-family: 'DM Mono', monospace;
+      animation: fileEditIn 0.3s ease;
+    }
+
+    @keyframes fileEditIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .file-edit-note .material-symbols-outlined {
+      color: var(--accent);
+      margin-right: 8px;
+    }
+
+    .file-edit-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 9px;
+      font-family: 'Anton', sans-serif;
+      border-radius: 9px;
+      margin-left: 6px;
+    }
+
+    /* Whitebox trigger in message */
+    .whitebox-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 10px;
+      cursor: pointer;
+      margin: 8px 0;
+      transition: all 0.2s;
+    }
+
+    .whitebox-trigger:hover {
+      background: var(--hover-bg);
+      border-color: var(--border-hover);
+      transform: translateX(4px);
     }
 
     .hidden {
@@ -1017,10 +1565,16 @@
       justify-content: center;
       z-index: 1000;
       backdrop-filter: blur(8px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     .modal-overlay.hidden {
       display: none;
+    }
+
+    .modal-overlay:not(.hidden) {
+      opacity: 1;
     }
 
     .modal {
@@ -1029,6 +1583,12 @@
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
       padding: 32px;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay:not(.hidden) .modal {
+      transform: scale(1) translateY(0);
     }
 
     .modal-logo {
@@ -1128,10 +1688,13 @@
       justify-content: center;
       z-index: 1001;
       backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     .settings-modal.open {
       display: flex;
+      opacity: 1;
     }
 
     .settings-content {
@@ -1143,6 +1706,13 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      transform: translateY(30px) scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .settings-modal.open .settings-content {
+      transform: translateY(0) scale(1);
     }
 
     .settings-header {
@@ -1188,7 +1758,7 @@
       background: none;
       border-bottom: 2px solid transparent;
       white-space: nowrap;
-      transition: all 0.15s;
+      transition: all 0.2s;
     }
 
     .settings-tab:hover {
@@ -1416,13 +1986,19 @@
       font-size: 9px;
       letter-spacing: 0.1em;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .prompt-btn:hover {
       background: var(--hover-bg);
       color: var(--text);
       border-color: var(--border-hover);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .prompt-btn:active {
+      transform: translateY(0) scale(0.98);
     }
 
     /* Toast */
@@ -1439,12 +2015,20 @@
       letter-spacing: 0.1em;
       z-index: 2000;
       opacity: 0;
-      transition: transform 0.3s, opacity 0.3s;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
 
     .toast.show {
       transform: translateX(-50%) translateY(0);
       opacity: 1;
+      animation: toastBounce 0.4s ease;
+    }
+
+    @keyframes toastBounce {
+      0% { transform: translateX(-50%) translateY(0) scale(0.8); }
+      50% { transform: translateX(-50%) translateY(-8px) scale(1.05); }
+      100% { transform: translateX(-50%) translateY(0) scale(1); }
     }
 
     /* Scrollbar */
@@ -1758,6 +2342,31 @@
   <button class="scroll-fab" id="scrollFab" aria-label="Scroll to bottom"><span class="material-symbols-outlined"
       style="font-size:20px">keyboard_arrow_down</span></button>
 
+  <!-- Image Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox"><span class="material-symbols-outlined">close</span></button>
+    <img id="lightboxImg" src="" alt="Full size image">
+  </div>
+
+  <!-- Whitebox Sidebar -->
+  <aside class="whitebox-sidebar" id="whiteboxSidebar">
+    <div class="whitebox-header">
+      <div class="whitebox-title">WHITEBOX</div>
+      <button class="whitebox-close" id="whiteboxClose"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="whitebox-files" id="whiteboxFiles">
+      <div class="whitebox-empty">NO FILES YET</div>
+    </div>
+    <div class="steps-panel hidden" id="stepsPanel">
+      <div class="steps-header" id="stepsHeader">
+        <span>STEPS</span>
+        <span class="material-symbols-outlined" style="font-size:14px">expand_more</span>
+      </div>
+      <div id="stepsList"></div>
+      <button class="step-continue-btn" id="stepContinue">CONTINUE WITH NEXT STEP</button>
+    </div>
+  </aside>
+
   <script>
     (function () {
       'use strict';
@@ -1797,6 +2406,23 @@ You: That's remembered! MEMORY:{"memory":"user name is Alex","category":"persona
 
 Only mention memories when the user explicitly asks "what do you remember?" or similar. Don't refer to saved memories in normal conversation.
 
+To create files in Whitebox, output a code block with JSON:
+\x60\x60\x60json
+{"whitebox":[{"name":"index.html","content":"<html>...</html>"},{"name":"style.css","content":"body {}"}]}
+\x60\x60\x60
+
+To edit existing files in Whitebox, use:
+\x60\x60\x60json
+{"editfiles":[{"name":"filename.js","content":"full new file content here"},{"name":"other.css","content":"css content"}]}
+\x60\x60\x60
+
+Always explain your actions and narrate the process as you create or edit files.
+
+For step-by-step work, include steps in the response:
+\x60\x60\x60json
+{"steps":[{"action":"Created index.html","result":"File created successfully"},{"action":"Added styles","result":"CSS added"}]}
+\x60\x60\x60
+
 To display a widget, output ONLY the JSON object in a code block:
 \x60\x60\x60json
 {"widget":"poll","question":"Your question?","options":["Option 1","Option 2","Option 3"]}
@@ -1827,6 +2453,8 @@ Available widgets:
         attachedImage: null,
         attachedPaste: null,
         isWhiteChat: false,
+        whiteboxSteps: [],
+        currentStep: 0,
         settings: { ...DEFAULTS }
       };
 
@@ -1879,7 +2507,16 @@ Available widgets:
         statusDot: $('statusDot'),
         statusText: $('statusText'),
         toast: $('toast'),
-        emptyState: $('emptyState')
+        emptyState: $('emptyState'),
+        lightbox: $('lightbox'),
+        lightboxImg: $('lightboxImg'),
+        lightboxClose: $('lightboxClose'),
+        whiteboxSidebar: $('whiteboxSidebar'),
+        whiteboxClose: $('whiteboxClose'),
+        whiteboxFiles: $('whiteboxFiles'),
+        stepsPanel: $('stepsPanel'),
+        stepsList: $('stepsList'),
+        stepContinue: $('stepContinue')
       };
 
       // Storage helpers
@@ -1936,6 +2573,24 @@ Available widgets:
         setTimeout(() => els.toast.classList.remove('show'), duration);
       }
 
+      // Sound effect
+      const playSound = (() => {
+        let ctx = null;
+        return () => {
+          if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.value = 800;
+          osc.type = 'sine';
+          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.1);
+        };
+      })();
+
       // Status update
       function setStatus(msg, type = 'idle') {
         els.statusText.textContent = msg;
@@ -1973,6 +2628,12 @@ Available widgets:
       // Format content (markdown)
       function formatContent(text) {
         let html = escapeHtml(text);
+
+        // Remove whitebox and steps JSON blocks but keep the text around them
+        html = html.replace(/```json\s*\{[\s\S]*?"whitebox"[\s\S]*?\}\s*```/gi, '');
+        html = html.replace(/```json\s*\{[\s\S]*?"steps"[\s\S]*?\}\s*```/gi, '');
+        html = html.replace(/\{[^{}]*"whitebox"[^{}]*\}/gi, '');
+        html = html.replace(/\{[^{}]*"steps"[^{}]*\}/gi, '');
 
         // Code blocks
         html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (match, lang, code) => {
@@ -2016,6 +2677,149 @@ Available widgets:
         const code = btn.closest('.code-block').querySelector('code').textContent;
         const blob = new Blob([code], { type: 'text/html' });
         window.open(URL.createObjectURL(blob), '_blank');
+      };
+
+      // Whitebox functions on window
+      const getFiles = () => state.chats[state.currentChatId]?.whiteboxFiles || [];
+      const setFiles = (files) => { if (state.chats[state.currentChatId]) state.chats[state.currentChatId].whiteboxFiles = files; };
+
+      window.toggleFileBody = function(id) {
+        const body = document.getElementById(`file-body-${id}`);
+        if (body) body.classList.toggle('open');
+      };
+
+      window.editFile = function(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file) return;
+        const body = document.getElementById(`file-body-${id}`);
+        if (!body) return;
+        
+        if (file.editing) {
+          body.innerHTML = `
+            <div class="file-diff" id="diff-${file.id}"></div>
+            <div class="file-footer">
+              <button class="file-save-btn" onclick="saveFileEdit('${file.id}')">SAVE</button>
+              <button class="file-discard-btn" onclick="discardFileEdit('${file.id}')">DISCARD</button>
+            </div>
+          `;
+          renderDiff(file.id);
+        } else {
+          body.innerHTML = `
+            <textarea class="file-editor" id="editor-${file.id}">${escapeHtml(file.content)}</textarea>
+            <div class="file-footer">
+              <button class="file-save-btn" onclick="saveFileEdit('${file.id}')">SAVE</button>
+              <button class="file-discard-btn" onclick="discardFileEdit('${file.id}')">DISCARD</button>
+            </div>
+          `;
+          file.editing = true;
+        }
+        body.classList.add('open');
+      };
+
+      window.renderDiff = function(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file) return;
+        const diffEl = document.getElementById(`diff-${id}`);
+        if (!diffEl) return;
+        
+        const diff = computeDiff(file.originalContent, file.content);
+        diffEl.innerHTML = diff.map(line => {
+          if (line.added) return `<div class="diff-line diff-add">+ ${escapeHtml(line.value)}</div>`;
+          if (line.removed) return `<div class="diff-line diff-remove">- ${escapeHtml(line.value)}</div>`;
+          return `<div class="diff-line diff-context">  ${escapeHtml(line.value)}</div>`;
+        }).join('');
+      };
+
+      window.computeDiff = function(oldText, newText) {
+        const oldLines = oldText.split('\n');
+        const newLines = newText.split('\n');
+        const result = [];
+        let i = 0, j = 0;
+        
+        while (i < oldLines.length || j < newLines.length) {
+          if (i >= oldLines.length) {
+            result.push({ added: true, value: newLines[j] });
+            j++;
+          } else if (j >= newLines.length) {
+            result.push({ removed: true, value: oldLines[i] });
+            i++;
+          } else if (oldLines[i] === newLines[j]) {
+            result.push({ value: oldLines[i] });
+            i++; j++;
+          } else {
+            result.push({ removed: true, value: oldLines[i] });
+            result.push({ added: true, value: newLines[j] });
+            i++; j++;
+          }
+        }
+        return result;
+      };
+
+      window.saveFileEdit = function(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file) return;
+        const editor = document.getElementById(`editor-${id}`);
+        if (editor) {
+          file.content = editor.value;
+          file.modified = true;
+        }
+        file.editing = false;
+        renderWhiteboxFiles();
+        showToast('File saved');
+      };
+
+      window.discardFileEdit = function(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file) return;
+        file.content = file.originalContent;
+        file.editing = false;
+        renderWhiteboxFiles();
+      };
+
+      window.deleteFile = function(id) {
+        const files = getFiles();
+        setFiles(files.filter(f => f.id != id));
+        renderWhiteboxFiles();
+        showToast('File deleted');
+      };
+
+      window.runFile = function(id) {
+        const files = getFiles();
+        const htmlFile = files.find(f => f.id == id);
+        if (!htmlFile || htmlFile.language !== 'html') return;
+        
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlFile.content, 'text/html');
+
+        // Replace CSS
+        doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+          const href = link.getAttribute('href');
+          const file = files.find(f => f.name === href);
+          if (file) {
+            const style = document.createElement('style');
+            style.textContent = file.content;
+            link.parentNode.replaceChild(style, link);
+          }
+        });
+
+        // Replace JS
+        doc.querySelectorAll('script[src]').forEach(script => {
+          const src = script.getAttribute('src');
+          const file = files.find(f => f.name === src);
+          if (file) {
+            const newScript = document.createElement('script');
+            newScript.textContent = file.content;
+            script.parentNode.replaceChild(newScript, script);
+          }
+        });
+
+        const win = window.open('', '_blank');
+        win.document.write(doc.documentElement.outerHTML);
+        win.document.close();
       };
 
       // Render chat list
@@ -2070,7 +2874,8 @@ Available widgets:
           created: Date.now(),
           updated: Date.now(),
           pinned: false,
-          isWhiteChat: false
+          isWhiteChat: false,
+          whiteboxFiles: []
         };
         state.currentChatId = id;
         renderChatList(els.chatSearch.value);
@@ -2135,6 +2940,7 @@ Available widgets:
         saveSettings();
         renderChatList(els.chatSearch.value);
         renderCurrentChat();
+        renderWhiteboxFiles();
         closeSidebar();
       }
 
@@ -2172,21 +2978,26 @@ Available widgets:
         els.emptyState.classList.add('hidden');
         els.chatWrap.innerHTML = '';
 
-        chat.messages.forEach((msg, i) => addMessageEl(msg.role, msg.content, i));
+        chat.messages.forEach((msg, i) => addMessageEl(msg.role, msg.content, i, msg.imageData));
         scrollToBottom();
       }
 
       // Add message element
-      function addMessageEl(role, content, index = -1) {
+      function addMessageEl(role, content, index = -1, imageData = null) {
         const div = document.createElement('div');
         div.className = `msg msg-${role}`;
         const time = state.settings.timestamps ? `<span class="msg-time">${formatTime(Date.now())}</span>` : '';
+
+        const imageHtml = (role === 'user' && imageData) 
+          ? `<div class="msg-attached-image"><img src="${imageData}" alt="Attached image"></div>` 
+          : '';
 
         div.innerHTML = `
           <div class="msg-header">
             <span class="msg-label">${role.toUpperCase()}</span>
             ${time}
           </div>
+          ${imageHtml}
           <div class="msg-content">${formatContent(content)}</div>
           <div class="msg-actions">
             <button class="msg-action copy-btn" data-content="${encodeURIComponent(content)}">COPY</button>
@@ -2266,6 +3077,242 @@ Available widgets:
           if (e.key === 'Enter') { save(); input.blur(); }
           if (e.key === 'Escape') { els.chatTitle.textContent = chat.title.slice(0, 30); }
         };
+      }
+
+      // Whitebox Functions
+      function openWhitebox() {
+        els.whiteboxSidebar.classList.add('open');
+        document.body.classList.add('whitebox-open');
+      }
+
+      function closeWhitebox() {
+        els.whiteboxSidebar.classList.remove('open');
+        document.body.classList.remove('whitebox-open');
+      }
+
+      function addWhiteboxFile(name, content, language = 'js') {
+        const chat = state.chats[state.currentChatId];
+        if (!chat) return;
+        
+        const ext = name.split('.').pop().toLowerCase();
+        const file = {
+          id: Date.now() + Math.random(),
+          name,
+          content,
+          originalContent: content,
+          language: ext === 'html' ? 'html' : ext === 'css' ? 'css' : 'js',
+          modified: false,
+          editing: false
+        };
+        if (!chat.whiteboxFiles) chat.whiteboxFiles = [];
+        chat.whiteboxFiles.push(file);
+        renderWhiteboxFiles();
+        openWhitebox();
+        return file;
+      }
+
+      function renderWhiteboxFiles() {
+        const chat = state.chats[state.currentChatId];
+        const files = chat?.whiteboxFiles || [];
+        
+        if (files.length === 0) {
+          els.whiteboxFiles.innerHTML = '<div class="whitebox-empty">NO FILES YET</div>';
+          return;
+        }
+        els.whiteboxFiles.innerHTML = files.map(file => `
+          <div class="file-item" data-id="${file.id}">
+            <div class="file-header" onclick="toggleFileBody('${file.id}')">
+              <div class="file-name">
+                <span class="material-symbols-outlined">description</span>
+                ${file.name}
+                ${file.editCount ? `<span class="file-edit-badge">${file.editCount}</span>` : ''}
+              </div>
+              <div class="file-actions">
+                <button class="file-btn" onclick="event.stopPropagation(); editFile('${file.id}')" title="Edit">
+                  <span class="material-symbols-outlined" style="font-size:14px">edit</span>
+                </button>
+                ${file.language === 'html' ? `<button class="file-btn run" onclick="event.stopPropagation(); runFile('${file.id}')" title="Run">▶</button>` : ''}
+                <button class="file-btn" onclick="event.stopPropagation(); deleteFile('${file.id}')" title="Delete">×</button>
+              </div>
+            </div>
+            <div class="file-preview">${escapeHtml(file.content.slice(0, 200))}${file.content.length > 200 ? '...' : ''}</div>
+            <div class="file-body" id="file-body-${file.id}"></div>
+          </div>
+        `).join('');
+      }
+
+      function toggleFileBody(id) {
+        const body = document.getElementById(`file-body-${id}`);
+        if (body) body.classList.toggle('open');
+      }
+
+      function editFile(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file) return;
+        const body = document.getElementById(`file-body-${id}`);
+        if (!body) return;
+        
+        if (file.editing) {
+          body.innerHTML = `
+            <div class="file-diff" id="diff-${file.id}"></div>
+            <div class="file-footer">
+              <button class="file-save-btn" onclick="saveFileEdit('${file.id}')">SAVE</button>
+              <button class="file-discard-btn" onclick="discardFileEdit('${file.id}')">DISCARD</button>
+            </div>
+          `;
+          renderDiff(file.id);
+        } else {
+          body.innerHTML = `
+            <textarea class="file-editor" id="editor-${file.id}">${escapeHtml(file.content)}</textarea>
+            <div class="file-footer">
+              <button class="file-save-btn" onclick="saveFileEdit('${file.id}')">SAVE</button>
+              <button class="file-discard-btn" onclick="discardFileEdit('${file.id}')">DISCARD</button>
+            </div>
+          `;
+          file.editing = true;
+        }
+        body.classList.add('open');
+      }
+
+      function renderDiff(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file) return;
+        const diffEl = document.getElementById(`diff-${id}`);
+        if (!diffEl) return;
+        
+        const diff = computeDiff(file.originalContent, file.content);
+        diffEl.innerHTML = diff.map(line => {
+          if (line.added) return `<div class="diff-line diff-add">+ ${escapeHtml(line.value)}</div>`;
+          if (line.removed) return `<div class="diff-line diff-remove">- ${escapeHtml(line.value)}</div>`;
+          return `<div class="diff-line diff-context">  ${escapeHtml(line.value)}</div>`;
+        }).join('');
+      }
+
+      function computeDiff(oldText, newText) {
+        const oldLines = oldText.split('\n');
+        const newLines = newText.split('\n');
+        const result = [];
+        let i = 0, j = 0;
+        
+        while (i < oldLines.length || j < newLines.length) {
+          if (i >= oldLines.length) {
+            result.push({ added: true, value: newLines[j] });
+            j++;
+          } else if (j >= newLines.length) {
+            result.push({ removed: true, value: oldLines[i] });
+            i++;
+          } else if (oldLines[i] === newLines[j]) {
+            result.push({ value: oldLines[i] });
+            i++; j++;
+          } else {
+            result.push({ removed: true, value: oldLines[i] });
+            result.push({ added: true, value: newLines[j] });
+            i++; j++;
+          }
+        }
+        return result;
+      }
+
+      function saveFileEdit(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file) return;
+        const editor = document.getElementById(`editor-${id}`);
+        if (editor) {
+          file.content = editor.value;
+          file.modified = true;
+        }
+        file.editing = false;
+        renderWhiteboxFiles();
+        showToast('File saved');
+      }
+
+      function discardFileEdit(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file) return;
+        file.content = file.originalContent;
+        file.editing = false;
+        renderWhiteboxFiles();
+      }
+
+      function deleteFile(id) {
+        const files = getFiles();
+        setFiles(files.filter(f => f.id != id));
+        renderWhiteboxFiles();
+        showToast('File deleted');
+      }
+
+      function runFile(id) {
+        const files = getFiles();
+        const file = files.find(f => f.id == id);
+        if (!file || file.language !== 'html') return;
+        
+        const win = window.open('', '_blank');
+        win.document.write(file.content);
+        win.document.close();
+      }
+
+      // Step functions
+      function addStep(action, result) {
+        state.whiteboxSteps.push({ action, result, timestamp: Date.now() });
+        renderSteps();
+      }
+
+      function addFileEditNote(filename, editCount) {
+        const note = document.createElement('div');
+        note.className = 'file-edit-note';
+        note.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">edit</span> <span>${filename} (edit ${editCount})</span>`;
+        els.chatWrap.appendChild(note);
+        scrollToBottom();
+      }
+
+      function renderSteps() {
+        if (state.whiteboxSteps.length === 0) {
+          els.stepsPanel.classList.add('hidden');
+          return;
+        }
+        els.stepsPanel.classList.remove('hidden');
+        els.stepsList.innerHTML = state.whiteboxSteps.map((step, i) => `
+          <div class="step-item">
+            <div class="step-number">STEP ${i + 1}</div>
+            <div class="step-action">${escapeHtml(step.action)}</div>
+            <div class="step-result">${escapeHtml(step.result.slice(0, 100))}${step.result.length > 100 ? '...' : ''}</div>
+          </div>
+        `).join('');
+      }
+
+      async function continueWithNextStep() {
+        if (state.currentStep >= state.whiteboxSteps.length) {
+          showToast('No more steps');
+          return;
+        }
+        const step = state.whiteboxSteps[state.currentStep];
+        state.currentStep++;
+        
+        setStatus('THINKING...', 'thinking');
+        const chat = state.chats[state.currentChatId];
+        const messages = [
+          ...chat.messages.map(m => ({ role: m.role, parts: [{ text: m.content }] })),
+          { role: 'user', parts: [{ text: `Continue from step ${state.currentStep}: ${step.action}. Result was: ${step.result}. What is the next step?` }] }
+        ];
+        
+        try {
+          const response = await callGemini(messages);
+          const processed = processResponse(response);
+          if (processed.text) {
+            addMessageEl('ai', processed.text);
+            chat.messages.push({ role: 'model', content: response });
+            chat.updated = Date.now();
+            saveSettings();
+          }
+          setStatus('READY', 'ready');
+        } catch (e) {
+          setStatus('ERROR', 'error');
+          showToast('Error: ' + e.message);
+        }
       }
 
       // Call Gemini API
@@ -2386,11 +3433,52 @@ Available widgets:
         // Extract widgets
         const widgetPattern = /```(?:json)?\s*(\{[\s\S]*?\})\s*```/g;
         let match;
+        let whiteboxCreated = false;
         while ((match = widgetPattern.exec(result)) !== null) {
           try {
             const obj = JSON.parse(match[1]);
-            if (obj.widget && !obj.memory) {
+            if (obj.widget && !obj.memory && !obj.whitebox && !obj.steps) {
               addWidget(obj);
+              result = result.replace(match[0], '');
+            }
+            if (obj.whitebox) {
+              obj.whitebox.forEach(file => {
+                addWhiteboxFile(file.name, file.content);
+              });
+              result = result.replace(match[0], '');
+              whiteboxCreated = true;
+            }
+            if (obj.steps) {
+              obj.steps.forEach(step => {
+                addStep(step.action, step.result);
+              });
+              result = result.replace(match[0], '');
+            }
+            if (obj.editfiles && Array.isArray(obj.editfiles)) {
+              const files = getFiles();
+              obj.editfiles.forEach(edit => {
+                const file = files.find(f => f.name === edit.name);
+                if (file) {
+                  file.content = edit.content;
+                  file.modified = true;
+                  file.editCount = (file.editCount || 0) + 1;
+                  addFileEditNote(edit.name, file.editCount);
+                }
+              });
+              renderWhiteboxFiles();
+              showToast('Files updated');
+              result = result.replace(match[0], '');
+            } else if (obj.editfile) {
+              const files = getFiles();
+              const file = files.find(f => f.name === obj.editfile);
+              if (file) {
+                file.content = obj.content;
+                file.modified = true;
+                file.editCount = (file.editCount || 0) + 1;
+                addFileEditNote(obj.editfile, file.editCount);
+                renderWhiteboxFiles();
+                showToast('File updated: ' + obj.editfile);
+              }
               result = result.replace(match[0], '');
             }
           } catch { }
@@ -2400,14 +3488,54 @@ Available widgets:
         while ((match = inlinePattern.exec(result)) !== null) {
           try {
             const obj = JSON.parse(match[0]);
-            if (obj.widget && !obj.memory) {
+            if (obj.widget && !obj.memory && !obj.whitebox && !obj.steps && !obj.editfile && !obj.editfiles) {
               addWidget(obj);
+              result = result.replace(match[0], '');
+            }
+            if (obj.whitebox) {
+              obj.whitebox.forEach(file => {
+                addWhiteboxFile(file.name, file.content);
+              });
+              result = result.replace(match[0], '');
+              whiteboxCreated = true;
+            }
+            if (obj.steps) {
+              obj.steps.forEach(step => {
+                addStep(step.action, step.result);
+              });
+              result = result.replace(match[0], '');
+            }
+            if (obj.editfiles && Array.isArray(obj.editfiles)) {
+              const files = getFiles();
+              obj.editfiles.forEach(edit => {
+                const file = files.find(f => f.name === edit.name);
+                if (file) {
+                  file.content = edit.content;
+                  file.modified = true;
+                  file.editCount = (file.editCount || 0) + 1;
+                  addFileEditNote(edit.name, file.editCount);
+                }
+              });
+              renderWhiteboxFiles();
+              showToast('Files updated');
+              result = result.replace(match[0], '');
+            } else if (obj.editfile) {
+              const files = getFiles();
+              const file = files.find(f => f.name === obj.editfile);
+              if (file) {
+                file.content = obj.content;
+                file.modified = true;
+                file.editCount = (file.editCount || 0) + 1;
+                addFileEditNote(obj.editfile, file.editCount);
+                renderWhiteboxFiles();
+                showToast('File updated: ' + obj.editfile);
+              }
               result = result.replace(match[0], '');
             }
           } catch { }
         }
 
-        return result.trim();
+        return { text: result.trim(), whiteboxCreated };
       }
 
       // Execute sandbox
@@ -2672,10 +3800,11 @@ Available widgets:
         els.emptyState.classList.add('hidden');
         if (pastedText) {
           addPastePreviewToChat(pastedText);
-          addMessageEl('user', text || '[Content attached]');
+          addMessageEl('user', text || '[Content attached]', -1, imageData);
         } else {
-          addMessageEl('user', fullText);
+          addMessageEl('user', fullText, -1, imageData);
         }
+        playSound();
 
         // Reset input
         els.chatInput.value = '';
@@ -2718,7 +3847,7 @@ Available widgets:
             saveSettings();
 
             const processed = processResponse(response);
-            if (processed) addMessageEl('ai', processed);
+            if (processed.text) addMessageEl('ai', processed.text);
           }
           setStatus('READY', 'ready');
         } catch (e) {
@@ -2995,6 +4124,12 @@ Available widgets:
 
         // Message actions
         els.chatWrap.onclick = (e) => {
+          // Lightbox for images
+          if (e.target.tagName === 'IMG') {
+            els.lightboxImg.src = e.target.src;
+            els.lightbox.classList.add('open');
+            return;
+          }
           if (e.target.classList.contains('copy-btn')) {
             const content = decodeURIComponent(e.target.dataset.content);
             navigator.clipboard.writeText(content).then(() => {
@@ -3028,6 +4163,14 @@ Available widgets:
         // Scroll
         els.chatWrap.onscroll = updateScrollFab;
         els.scrollFab.onclick = scrollToBottom;
+
+        // Lightbox
+        els.lightbox.onclick = () => els.lightbox.classList.remove('open');
+        els.lightboxClose.onclick = (e) => { e.stopPropagation(); els.lightbox.classList.remove('open'); };
+
+        // Whitebox
+        els.whiteboxClose.onclick = closeWhitebox;
+        els.stepContinue.onclick = continueWithNextStep;
 
         // Input
         els.sendBtn.onclick = sendMessage;
